@@ -1,6 +1,5 @@
 import subprocess
 import os
-import cv2
 from PIL import Image
 import numpy as np
 import pandas as pd
@@ -9,13 +8,6 @@ import matplotlib.pyplot as plt
 # Used in Pillow example
 starting_roll = 0
 
-
-# Example funciton that generates random noise and add it to the image. Clamp values to [0, 255].
-def add_gaussian_noise(image, mean=0, std=20):
-    noise = np.random.normal(mean, std, image.shape).astype(np.float32)
-    noisy_image = np.clip(image.astype(np.float32) + noise, 0, 255).astype(np.uint8)
-
-    return noisy_image
 
 # Generate a star field image as a base.
 subprocess.run(["./lost", "pipeline",
@@ -32,23 +24,6 @@ subprocess.run(["./lost", "pipeline",
                 "--plot-raw-input", "raw-input.png",
                 "--plot-input", "input.png",])
 
-
-
-#------------------------------------------------
-# OpenCV example:
-image = cv2.imread('raw-input.png')
-
-# Image exists, add noise
-noisy_image = add_gaussian_noise(image)
-
-# If we want to display them:
-cv2.imshow("Original Image", image)
-cv2.imshow("Noisy Image", noisy_image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-# Save the noisy image.
-cv2.imwrite('noisy_input.png', noisy_image) 
 
 #------------------------------------------------
 # Pillow example:
@@ -71,7 +46,6 @@ with open(results_file, "w") as f:
 database_path = "roll-database.dat"
 
 if not os.path.exists(database_path):
-    print("Generating star database...")
     subprocess.run([
         "./lost", "database",
         "--max-stars", "5000",
